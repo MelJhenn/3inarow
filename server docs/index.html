@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="icon" type="image/png" href="/tnr.png"/>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script> 
+	var id = null;
+	//var data = "jnv,2"; data = '{"img": "jnv", "id": 2}';
+	function changeImg (x, y){
+		console.log("X Coordinate: " + x + " Y Coordinate: " + y);
+		$.ajax({
+			type: 'POST',  // Envío con método POST
+			url: 'coordinates',  // Fichero destino (SmallTalk que trata los datos)
+			data: { x: x, y: y, id: id } // Datos que se envían
+			}).done(function( dataFromServer ) {  // Función que se ejecuta si todo ha ido bien
+				var [base64String, number] = dataFromServer.split (","); 
+				id = number; 
+				console.log ("Everything is fine");
+				$("img").attr("src","data:image/png;base64," + base64String);  // cambaimos la imagen por la que nos llega de server
+			}).fail(function (jqXHR, textStatus, errorThrown){ // Función que se ejecuta si algo ha ido mal
+				// Mostramos en consola el mensaje con el error que se ha producido
+				console.log("The following error occured: "+textStatus ) ; 
+				console.log (errorThrown);
+				console.log (jqXHR);
+			});
+	}
+
+
+	$(document).ready(function() {
+		changeImg ( );
+		$("img").on("click", function(event) {
+			var x = event.pageX - this.offsetLeft;
+			var y = event.pageY - this.offsetTop;
+			changeImg (x, y) 
+				
+		});
+	});
+
+	</script>
+	<style>
+	#inner {
+	width: 500px;
+	margin: 0 auto;
+	}
+	</style>
+</head>
+<body>
+
+<div id ="outter">
+  <div id ="inner">
+    <center>
+	<h1> TicTacToe Game </h1>
+	</center>
+	<img src = "loading.gif" > 
+  </div>
+</div>
+</body>
+</html>
+
